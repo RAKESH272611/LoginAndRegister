@@ -1,9 +1,12 @@
 import React, { useState } from 'react'
 import '../Assets/css/Register.css';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 
 const Register = () => {
+
+      const navigate = useNavigate();
 
     const [user,setUser] = useState({
         userName: "",
@@ -17,6 +20,23 @@ const Register = () => {
             ...user,
             [e.target.name] : e.target.value
         })
+    }
+
+    const register = (e) => {
+      e.preventDefault();
+      const {userName,email,password,confirmPassword} = user;
+      if(email && userName && password && (confirmPassword===password)){
+         axios.post("http://localhost:5000/register",user).
+         then(res=>{
+           alert(res.data.message);
+           navigate("/");
+         }).catch(err=>{
+           console.log(err);
+         })
+      }
+      else{
+        alert("Invalid Input");
+      }
     }
 
     return (
@@ -41,10 +61,10 @@ const Register = () => {
 
             <div className="form-group">
               <label htmlFor="confirm-password">Confirm Password:</label>
-              <input type="password" id="confirm-password" className="input-field" name='confirmPassword' />
+              <input onChange={inputHandle} type="password" id="confirm-password" className="input-field" name='confirmPassword' />
             </div>
   
-            <button type="submit" className="register-button">Register</button>
+            <button onClick={register} type="submit" className="register-button">Register</button>
           </form>
         </div>
       </div>
